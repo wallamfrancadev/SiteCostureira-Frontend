@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import CartSidebar from './components/CartSidebar';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
+import PagamentoModal from './components/PagamentoModal';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
 import HomePage from './pages/HomePage';
@@ -17,11 +18,16 @@ import './App.css';
 function Layout() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [pagamentoOrder, setPagamentoOrder] = useState(null);
   const { cartItems, updateQuantity, removeItem, totalItems, clearCart } = useCartContext();
 
   const handleLoginRequest = () => {
     setIsCartOpen(false);
     setIsAuthOpen(true);
+  };
+
+  const handlePaymentRequest = (orderId, orderTotal) => {
+    setPagamentoOrder({ id: orderId, total: orderTotal });
   };
 
   return (
@@ -52,9 +58,17 @@ function Layout() {
         onRemoveItem={removeItem}
         onOrderSuccess={clearCart}
         onLoginRequest={handleLoginRequest}
+        onPaymentRequest={handlePaymentRequest}
       />
 
       <AuthModal open={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+
+      <PagamentoModal
+        orderId={pagamentoOrder?.id ?? null}
+        orderTotal={pagamentoOrder?.total ?? 0}
+        onClose={() => setPagamentoOrder(null)}
+        onPaid={() => { clearCart(); setPagamentoOrder(null); }}
+      />
     </div>
   );
 }

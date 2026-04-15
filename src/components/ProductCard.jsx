@@ -3,18 +3,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
 const ProductCard = ({ product, onAddToCart }) => {
-  const imageUrl = product.image 
-    ? `http://localhost:8000${product.image}` 
-    : 'https://via.placeholder.com/300x300?text=Produto';
+  const imageUrl = product.image || null;
 
   return (
     <Card className="card-hover overflow-hidden bg-card border-border">
-      <div className="relative h-64 overflow-hidden">
-        <img
-          src={imageUrl}
-          alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-        />
+      <div className="relative h-64 overflow-hidden bg-rosa-cha">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-5xl">🧵</div>
+        )}
         {product.stock <= 0 && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <span className="text-white font-bold text-lg">Esgotado</span>

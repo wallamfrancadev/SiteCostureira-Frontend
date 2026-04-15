@@ -43,8 +43,8 @@ const HomePage = ({ onCartOpen }) => {
             Artesanato contemporâneo com alma e identidade
           </p>
           <p className="text-lg text-marrom-linho max-w-2xl mx-auto mb-8">
-            Cada peça é única, feita à mão com dedicação e carinho.
-            Descubra a beleza do trabalho artesanal.
+            Onde seu desejo se torna arte. Todas as peças são feitas à mão,
+            com muita dedicação e carinho.
           </p>
           <Button
             onClick={() => document.getElementById('loja').scrollIntoView({ behavior: 'smooth' })}
@@ -110,19 +110,35 @@ const HomePage = ({ onCartOpen }) => {
 
       {/* Sobre Section */}
       <section id="sobre" className="py-16 bg-rosa-cha">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-playfair font-bold text-marrom-linho mb-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-playfair font-bold text-marrom-linho text-center mb-10">
             Sobre Nós
           </h2>
-          <p className="text-lg text-marrom-linho leading-relaxed mb-6">
-            A <strong>Dety Costureira & Artesanatos</strong> nasceu do amor pelo trabalho manual
-            e pela valorização da arte artesanal. Cada peça é cuidadosamente confeccionada,
-            unindo técnicas tradicionais com um toque contemporâneo.
-          </p>
-          <p className="text-lg text-marrom-linho leading-relaxed">
-            Acreditamos que o artesanato carrega história, personalidade e calor humano.
-            Por isso, cada produto é único e feito especialmente para você.
-          </p>
+          <div className="flex flex-col md:flex-row items-center gap-10">
+            {/* Foto */}
+            <div className="flex-shrink-0">
+              <img
+                src="/sobre-dety.jpg"
+                alt="Dety Artesanatos"
+                className="w-64 h-80 object-cover rounded-2xl shadow-lg"
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              />
+            </div>
+            {/* Texto */}
+            <div className="space-y-4 text-marrom-linho text-lg leading-relaxed">
+              <p>
+                Sempre fomos uma família do mundo do artesanato, e desde pequena eu amo fazer arte.
+              </p>
+              <p>
+                Há 10 anos venho trabalhando com corte e costura, e realizamos desde trabalho industrial ao cotidiano.
+              </p>
+              <p>
+                Tento transmitir esse amor e carinho em cada trabalho que faço!
+                Espero que goste do nosso trabalho e caso tenha algum pedido exclusivo, nos contate pelo WhatsApp!
+              </p>
+              <p className="font-playfair font-semibold text-xl pt-2 text-center">Dety.</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -136,7 +152,12 @@ const HomePage = ({ onCartOpen }) => {
             Tem alguma dúvida ou pedido especial? Entre em contato conosco pelo WhatsApp!
           </p>
           <Button
-            onClick={() => window.open('https://wa.me/5511999999999', '_blank')}
+            onClick={() => {
+              const msg = encodeURIComponent(
+                'Olá, Vi seu trabalho através do site DetyArtesanatos.com.br e gostaria de realizar uma encomenda!!'
+              );
+              window.open(`https://wa.me/5511982841563?text=${msg}`, '_blank');
+            }}
             className="btn-terracota text-lg px-8 py-6 bg-green-600 hover:bg-green-700"
           >
             Falar no WhatsApp

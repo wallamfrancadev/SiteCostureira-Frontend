@@ -14,7 +14,7 @@ const ProfilePage = () => {
     first_name: '',
     last_name: '',
     email: '',
-    profile: { phone: '', address: '', city: '', state: '', cep: '' },
+    profile: { phone: '', address: '', number: '', city: '', state: '', cep: '' },
   });
 
   useEffect(() => {
@@ -26,6 +26,7 @@ const ProfilePage = () => {
         profile: {
           phone: user.profile?.phone ?? '',
           address: user.profile?.address ?? '',
+          number: user.profile?.number ?? '',
           city: user.profile?.city ?? '',
           state: user.profile?.state ?? '',
           cep: user.profile?.cep ?? '',
@@ -36,7 +37,7 @@ const ProfilePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (['phone', 'address', 'city', 'state', 'cep'].includes(name)) {
+    if (['phone', 'address', 'number', 'city', 'state', 'cep'].includes(name)) {
       setFormData((prev) => ({ ...prev, profile: { ...prev.profile, [name]: value } }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -93,9 +94,15 @@ const ProfilePage = () => {
           <h2 className="text-lg font-playfair font-semibold text-marrom-linho">
             Endereço
           </h2>
-          <div className="space-y-1">
-            <Label htmlFor="address">Endereço</Label>
-            <Input id="address" name="address" value={formData.profile.address} onChange={handleChange} />
+          <div className="grid grid-cols-3 gap-4">
+            <div className="col-span-2 space-y-1">
+              <Label htmlFor="address">Endereço (rua/avenida)</Label>
+              <Input id="address" name="address" value={formData.profile.address} onChange={handleChange} />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="number">Número</Label>
+              <Input id="number" name="number" value={formData.profile.number} onChange={handleChange} />
+            </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2 space-y-1">

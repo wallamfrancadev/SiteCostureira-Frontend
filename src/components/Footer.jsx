@@ -1,4 +1,9 @@
-import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react';
+import { Instagram, Mail, Phone, MapPin } from 'lucide-react';
+
+const WA_NUMBER = '5511982841563';
+const WA_MSG = encodeURIComponent(
+  'Olá, Vi seu trabalho através do site DetyArtesanatos.com.br e gostaria de realizar uma encomenda!!'
+);
 
 const Footer = () => {
   return (
@@ -12,7 +17,7 @@ const Footer = () => {
             </h3>
             <p className="text-rosa-cha mb-2">& Artesanatos</p>
             <p className="text-sm text-creme-algodao">
-              Peças artesanais feitas com amor e dedicação. 
+              Peças artesanais feitas com amor e dedicação.
               Cada produto é único e carrega a essência do trabalho manual.
             </p>
           </div>
@@ -21,17 +26,25 @@ const Footer = () => {
           <div>
             <h4 className="text-xl font-playfair font-semibold mb-4">Contato</h4>
             <div className="space-y-3">
+              <a
+                href={`https://wa.me/${WA_NUMBER}?text=${WA_MSG}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-creme-algodao hover:text-rosa-cha transition-colors"
+              >
+                <Phone className="w-4 h-4 flex-shrink-0" />
+                <span>(11) 9 8284-1563</span>
+              </a>
+              <a
+                href="mailto:detyartesanatos@gmail.com"
+                className="flex items-center gap-2 text-sm text-creme-algodao hover:text-rosa-cha transition-colors"
+              >
+                <Mail className="w-4 h-4 flex-shrink-0" />
+                <span>detyartesanatos@gmail.com</span>
+              </a>
               <div className="flex items-center gap-2 text-sm text-creme-algodao">
-                <Phone className="w-4 h-4" />
-                <span>(11) 99999-9999</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-creme-algodao">
-                <Mail className="w-4 h-4" />
-                <span>contato@detycostureira.com.br</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-creme-algodao">
-                <MapPin className="w-4 h-4" />
-                <span>São Paulo, SP</span>
+                <MapPin className="w-4 h-4 flex-shrink-0" />
+                <span>Itapecerica da Serra, SP</span>
               </div>
             </div>
           </div>
@@ -41,20 +54,13 @@ const Footer = () => {
             <h4 className="text-xl font-playfair font-semibold mb-4">Redes Sociais</h4>
             <div className="flex gap-4">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/dety_artersanato/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 bg-rosa-cha hover:bg-terracota rounded-full transition-colors"
+                aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5 text-marrom-linho" />
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 bg-rosa-cha hover:bg-terracota rounded-full transition-colors"
-              >
-                <Facebook className="w-5 h-5 text-marrom-linho" />
               </a>
             </div>
           </div>
@@ -71,4 +77,3 @@ const Footer = () => {
 };
 
 export default Footer;
-

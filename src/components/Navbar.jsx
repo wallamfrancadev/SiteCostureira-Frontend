@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingCart, User, LogOut, Package, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +14,8 @@ import { useAuth } from '../context/AuthContext';
 const Navbar = ({ cartItemsCount = 0, onCartClick, onAuthOpen }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const menuItems = [
     { label: 'Início', href: '#home' },
@@ -21,6 +23,17 @@ const Navbar = ({ cartItemsCount = 0, onCartClick, onAuthOpen }) => {
     { label: 'Sobre', href: '#sobre' },
     { label: 'Contato', href: '#contato' },
   ];
+
+  const handleAnchorClick = (e, hash) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+    if (location.pathname === '/') {
+      document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/');
+      setTimeout(() => document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  };
 
   return (
     <nav className="bg-off-white shadow-md sticky top-0 z-50">
@@ -36,25 +49,16 @@ const Navbar = ({ cartItemsCount = 0, onCartClick, onAuthOpen }) => {
 
           {/* Menu Desktop */}
           <div className="hidden md:flex items-center space-x-8">
-            {menuItems.map((item) =>
-              item.href.startsWith('#') ? (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="text-marrom-linho hover:text-terracota transition-colors font-lato font-medium"
-                >
-                  {item.label}
-                </a>
-              ) : (
-                <Link
-                  key={item.label}
-                  to={item.href}
-                  className="text-marrom-linho hover:text-terracota transition-colors font-lato font-medium"
-                >
-                  {item.label}
-                </Link>
-              )
-            )}
+            {menuItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={(e) => handleAnchorClick(e, item.href)}
+                className="text-marrom-linho hover:text-terracota transition-colors font-lato font-medium"
+              >
+                {item.label}
+              </a>
+            ))}
           </div>
 
           {/* Carrinho + Auth + Menu Mobile */}
@@ -148,8 +152,8 @@ const Navbar = ({ cartItemsCount = 0, onCartClick, onAuthOpen }) => {
                 <a
                   key={item.label}
                   href={item.href}
+                  onClick={(e) => handleAnchorClick(e, item.href)}
                   className="text-marrom-linho hover:text-terracota transition-colors font-lato py-2"
-                  onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
                 </a>

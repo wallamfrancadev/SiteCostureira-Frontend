@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { MessageCircle, XCircle } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { MessageCircle, XCircle, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -12,13 +12,14 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { api } from '../services/api';
+import PagamentoModal from '../components/PagamentoModal';
 
 const STATUS_LABELS = {
-  pending:    { label: 'Pendente',     color: 'text-yellow-600 bg-yellow-50' },
-  processing: { label: 'Processando',  color: 'text-blue-600 bg-blue-50' },
-  shipped:    { label: 'Enviado',      color: 'text-purple-600 bg-purple-50' },
-  delivered:  { label: 'Entregue',     color: 'text-green-600 bg-green-50' },
-  cancelled:  { label: 'Cancelado',    color: 'text-red-600 bg-red-50' },
+  pending:    { label: 'Pendente',      color: 'text-yellow-600 bg-yellow-50' },
+  processing: { label: 'Processando',   color: 'text-blue-600 bg-blue-50' },
+  shipped:    { label: 'Enviado',       color: 'text-purple-600 bg-purple-50' },
+  delivered:  { label: 'Entregue',      color: 'text-green-600 bg-green-50' },
+  cancelled:  { label: 'Cancelado',     color: 'text-red-600 bg-red-50' },
 };
 
 const OrdersPage = () => {
@@ -27,6 +28,7 @@ const OrdersPage = () => {
   const [whatsapp, setWhatsapp] = useState('5511999999999');
   const [cancelTarget, setCancelTarget] = useState(null);
   const [cancelling, setCancelling] = useState(false);
+  const [pagamentoOrder, setPagamentoOrder] = useState(null);
 
   const loadOrders = () => {
     api.get('/orders/')
@@ -61,16 +63,21 @@ const OrdersPage = () => {
     window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
+  const handlePaid = useCallback((orderId) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, status: 'processing' } : o))
+    );
+    setPagamentoOrder(null);
+  }, []);
+
   const handleCancel = async () => {
     if (!cancelTarget) return;
     setCancelling(true);
     try {
       const updated = await api.patch(`/orders/${cancelTarget.id}/cancel/`, {});
-      setOrders((prev) =>
-        prev.map((o) => (o.id === updated.id ? updated : o))
-      );
+      setOrders((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
     } catch {
-      // silencioso — o status não muda na tela se falhar
+      // silencioso
     } finally {
       setCancelling(false);
       setCancelTarget(null);
@@ -98,7 +105,7 @@ const OrdersPage = () => {
       ) : (
         <div className="flex flex-col gap-6">
           {orders.map((order) => {
-            const status = STATUS_LABELS[order.status] ?? { label: order.status, color: '' };
+            const statusInfo = STATUS_LABELS[order.status] ?? { label: order.status, color: '' };
             const isPending = order.status === 'pending';
 
             return (
@@ -106,7 +113,6 @@ const OrdersPage = () => {
                 key={order.id}
                 className="border border-border rounded-xl p-6 bg-card shadow-sm"
               >
-                {/* Cabeçalho */}
                 <div className="flex items-start justify-between mb-4 gap-4">
                   <div>
                     <p className="font-playfair text-lg font-semibold text-marrom-linho">
@@ -114,18 +120,15 @@ const OrdersPage = () => {
                     </p>
                     <p className="text-sm text-muted-foreground font-lato">
                       {new Date(order.created_at).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric',
+                        day: '2-digit', month: 'long', year: 'numeric',
                       })}
                     </p>
                   </div>
-                  <span className={`text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap ${status.color}`}>
-                    {status.label}
+                  <span className={`text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap ${statusInfo.color}`}>
+                    {statusInfo.label}
                   </span>
                 </div>
 
-                {/* Itens */}
                 <div className="divide-y divide-border">
                   {order.items.map((item) => (
                     <div key={item.id} className="flex items-center justify-between py-3">
@@ -142,9 +145,7 @@ const OrdersPage = () => {
                           </div>
                         )}
                         <div>
-                          <p className="font-lato font-medium text-marrom-linho">
-                            {item.product_name}
-                          </p>
+                          <p className="font-lato font-medium text-marrom-linho">{item.product_name}</p>
                           <p className="text-sm text-muted-foreground">Qtd: {item.quantity}</p>
                         </div>
                       </div>
@@ -155,21 +156,28 @@ const OrdersPage = () => {
                   ))}
                 </div>
 
-                {/* Rodapé: total + ações */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 pt-4 border-t border-border gap-3">
                   <p className="font-playfair text-xl font-bold text-marrom-linho">
                     Total: R$ {Number(order.total).toFixed(2).replace('.', ',')}
                   </p>
 
                   {isPending && (
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        onClick={() => setPagamentoOrder(order)}
+                        className="bg-terracota hover:bg-terracota/90 text-white gap-2"
+                        size="sm"
+                      >
+                        <CreditCard className="w-4 h-4" />
+                        Pagar
+                      </Button>
                       <Button
                         onClick={() => handlePayWhatsApp(order)}
                         className="bg-green-600 hover:bg-green-700 text-white gap-2"
                         size="sm"
                       >
                         <MessageCircle className="w-4 h-4" />
-                        Pagar via WhatsApp
+                        WhatsApp
                       </Button>
                       <Button
                         onClick={() => setCancelTarget(order)}
@@ -189,11 +197,14 @@ const OrdersPage = () => {
         </div>
       )}
 
-      {/* Confirmação de cancelamento */}
-      <AlertDialog
-        open={!!cancelTarget}
-        onOpenChange={(v) => !v && setCancelTarget(null)}
-      >
+      <PagamentoModal
+        orderId={pagamentoOrder?.id ?? null}
+        orderTotal={Number(pagamentoOrder?.total ?? 0)}
+        onClose={() => setPagamentoOrder(null)}
+        onPaid={handlePaid}
+      />
+
+      <AlertDialog open={!!cancelTarget} onOpenChange={(v) => !v && setCancelTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Cancelar pedido #{cancelTarget?.id}?</AlertDialogTitle>
